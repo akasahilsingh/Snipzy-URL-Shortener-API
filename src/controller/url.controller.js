@@ -30,7 +30,7 @@ const shortUrlController = async (req, res) => {
 const redirectUrlController = async (req, res) => {
   try {
     const { shortId } = req.params;
-    console.log("Short idfrom req", shortId)
+    console.log("Short idfrom req", shortId);
     if (!shortId) {
       return res.status(400).json({
         message: "Short id is required to continue",
@@ -48,6 +48,9 @@ const redirectUrlController = async (req, res) => {
       });
     }
 
+    await urlModel.findByIdAndUpdate(findShortId._id, {
+      $push: { viewHistory: {} },
+    });
     res.redirect(findShortId.url);
   } catch (error) {
     console.log("There is an error while redirecting the url: ", error.message);
@@ -57,4 +60,36 @@ const redirectUrlController = async (req, res) => {
   }
 };
 
-module.exports = { shortUrlController, redirectUrlController };
+const getAnalyticsController = async (req, res) => {
+  try {
+    const shortId = req.params;
+
+    if (!shortId) {
+      return res.status(404).json({
+        message: "This is url is not available",
+      });
+    }
+
+    const clicks = await urlModel.findOne(shortId);
+    console.log("Total clicks are: ", clicks.viewHistory.length);
+    const analytics = clicks.viewHistory.length;
+    return res.status(200).json({
+      message: "Clicked retrieved successfully",
+      analytics,
+    });
+  } catch (error) {
+    console.log(
+      "There is an error in error while getting analytics: ",
+      error.message,
+    );
+    return res.status(500).json({
+      message: "Something went wrong",
+    });
+  }
+};
+
+module.exports = {
+  shortUrlController,
+  redirectUrlController,
+  getAnalyticsController,
+};
