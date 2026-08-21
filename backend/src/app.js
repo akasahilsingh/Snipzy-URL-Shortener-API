@@ -10,7 +10,7 @@ connectDB();
 app.use(express.json());
 
 app.use("/api", urlShortRoute);
-app.use("/", urlShortRoute); 
+// app.use("/", urlShortRoute); 
 app.use("/api", authRoute)
 
 module.exports = app;

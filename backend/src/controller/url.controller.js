@@ -62,15 +62,15 @@ const redirectUrlController = async (req, res) => {
 
 const getAnalyticsController = async (req, res) => {
   try {
-    const shortId = req.params;
-
+    const { shortId } = req.params;
+    console.log("SHort id from client", shortId);
     if (!shortId) {
       return res.status(404).json({
         message: "This is url is not available",
       });
     }
 
-    const clicks = await urlModel.findOne(shortId);
+    const clicks = await urlModel.findOne({ shortId });
     console.log("Total clicks are: ", clicks.viewHistory.length);
     const analytics = clicks.viewHistory.length;
     return res.status(200).json({

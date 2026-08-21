@@ -1,5 +1,4 @@
-const authModel = require("../model/auth.model.js");
-const urlModel = require("../model/url.model.js");
+const userModel = require("../model/user.model.js")
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -15,7 +14,7 @@ const registerController = async (req, res) => {
       });
     }
 
-    const foundUser = await urlModel.findOne({
+    const foundUser = await userModel.findOne({
       email,
     });
 
@@ -33,7 +32,7 @@ const registerController = async (req, res) => {
     const refreshToken = await jwt.sign({ email }, JWT_SECRET, {
       expiresIn: "7d",
     });
-    const userRegister = await authModel.create({
+    const userRegister = await userModel.create({
       email,
       password: hashedPassword,
     });
@@ -69,7 +68,7 @@ const loginController = async (req, res) => {
       });
     }
 
-    const user = await authModel.findOne({ email });
+    const user = await userModel.findOne({ email });
 
     if (!user) {
       return res.status(404).json({
@@ -123,7 +122,7 @@ const logoutController = async (req, res) => {
     return res.status(200).json({
       message: "Logged Out Successfully",
     });
-  } catch {
+  } catch (error) {
     console.log("Error while logut: ", error.message);
     return res.status(500).json({
       message: "Error while logout",
